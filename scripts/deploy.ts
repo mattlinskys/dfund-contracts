@@ -9,7 +9,7 @@ async function main() {
 
   console.log("FUND token deployed at", await factory.fund());
 
-  let tx = await factory.createProject("slug");
+  let tx = await factory.createProject("example-project", "Example project");
   await tx.wait();
 
   tx = await factory.createProfile("Matt");

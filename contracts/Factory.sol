@@ -44,14 +44,14 @@ contract Factory is AccessControl {
         emit ProfileCreated(address(profile), msg.sender, name);
     }
 
-    function createProject(string calldata slug) public {
+    function createProject(string calldata slug, string calldata name) public {
         // TODO: Slug validation (library)
         require(
             address(projects[slug]) == address(0),
             "Project slug is already taken"
         );
 
-        Project project = new Project(msg.sender, slug);
+        Project project = new Project(msg.sender, slug, name);
         projects[slug] = project;
 
         emit ProfileCreated(address(project), msg.sender, slug);

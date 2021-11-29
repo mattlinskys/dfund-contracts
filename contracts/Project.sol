@@ -35,11 +35,17 @@ contract Project is AccessControlEnumerable, Customizable {
 
     address public factory;
     string public slug;
+    string public name;
     EnumerableSet.AddressSet posts;
 
-    constructor(address admin, string memory _slug) {
+    constructor(
+        address admin,
+        string memory _slug,
+        string memory _name
+    ) {
         factory = msg.sender;
         slug = _slug;
+        name = _name;
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
