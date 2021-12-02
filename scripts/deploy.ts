@@ -9,21 +9,46 @@ async function main() {
 
   console.log("FUND token deployed at", await factory.fund());
 
+  const [account] = await ethers.getSigners();
+
   let tx = await factory.createProject("example-project", "Example project");
   await tx.wait();
 
-  tx = await factory.createProfile("Matt");
-  await tx.wait();
+  const projectAddress = await factory.projects("example-project");
+  console.log("Project deployed at", projectAddress);
 
-  const [account] = await ethers.getSigners();
-  const address = await factory.profiles(account.address);
-  console.log("Profile deployed at", address);
+  const project = await ethers.getContractAt("Project", projectAddress);
+  await project.setCustomKey(
+    ethers.utils.keccak256(ethers.utils.toUtf8Bytes("bannerUri")),
+    "https://via.placeholder.com/1200x360"
+  );
 
-  const profile = await ethers.getContractAt("Profile", address);
+  // tx = await factory.createProfile("Matt");
+  // await tx.wait();
 
-  await profile.setAvatarUri("https://randomuser.me/api/portraits/men/22.jpg");
+  // const address = await factory.profiles(account.address);
+  // console.log("Profile deployed at", address);
 
-  console.log("Profile name", await profile.name());
+  // const profile = await ethers.getContractAt("Profile", address);
+
+  // console.log(
+  //   "Profile name",
+  //   await profile.customKeys(
+  //     ethers.utils.keccak256(ethers.utils.toUtf8Bytes("name"))
+  //   )
+  // );
+
+  // await profile.setCustomKey(
+  //   ethers.utils.keccak256(ethers.utils.toUtf8Bytes("avatarUri")),
+  //   "http://test.te"
+  // );
+
+  // console.log(
+  //   "Profile avatar URI",
+  //   await profile.customKeys(
+  //     ethers.utils.keccak256(ethers.utils.toUtf8Bytes("avatarUri"))
+  //   )
+  // );
 }
 
 main()

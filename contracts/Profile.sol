@@ -2,22 +2,33 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+
 import "./Customizable.sol";
 
 contract Profile is Ownable, Customizable {
-    string public name;
-    string public avatarUri;
+    bytes32 public name;
 
-    constructor(address admin, string memory _name) {
-        transferOwnership(admin);
+    constructor(address owner, bytes32 _name) {
+        transferOwnership(owner);
         name = _name;
     }
 
-    function setName(string calldata _name) public onlyOwner {
-        name = _name;
+    function setCustomKeys(bytes32[] memory keys, string[] memory values)
+        public
+        virtual
+        override
+        onlyOwner
+    {
+        super.setCustomKeys(keys, values);
     }
 
-    function setAvatarUri(string calldata _avatarUri) public onlyOwner {
-        avatarUri = _avatarUri;
+    function setCustomKey(bytes32 key, string memory value)
+        public
+        virtual
+        override
+        onlyOwner
+    {
+        super.setCustomKey(key, value);
     }
 }

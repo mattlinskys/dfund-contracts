@@ -9,6 +9,11 @@ import "./Customizable.sol";
 contract Post is Customizable {
     using Counters for Counters.Counter;
 
+    struct Fundraising {
+        uint256 goal;
+        uint256 deadline;
+    }
+
     struct Comment {
         uint256 id;
         uint256 time;
@@ -17,14 +22,23 @@ contract Post is Customizable {
         uint256[] replies;
     }
 
-    Counters.Counter public idCounter;
+    address public project;
     uint256 public time;
     string public content;
+    Fundraising public fundraising;
+
+    Counters.Counter public idCounter;
     mapping(uint256 => Comment) public comments;
 
     constructor(string memory _content) {
+        project = msg.sender;
         time = block.timestamp;
         content = _content;
+    }
+
+    modifier onlyProject() {
+        require(msg.sender == project);
+        _;
     }
 
     function addComment(string memory _content, uint256 _parent) public {

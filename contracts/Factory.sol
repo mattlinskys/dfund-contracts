@@ -11,19 +11,20 @@ contract Factory is AccessControl {
     event ProfileCreated(
         address indexed account,
         address indexed creator,
-        string name
+        bytes32 name
     );
 
     event ProjectCreated(
         address indexed account,
         address indexed creator,
-        string slug
+        bytes32 slug,
+        bytes32 name
     );
 
     bytes32 public constant MODERATOR_ROLE = keccak256("MODERATOR_ROLE");
 
     mapping(address => Profile) public profiles;
-    mapping(string => Project) public projects;
+    mapping(bytes32 => Project) public projects;
     Fund public fund;
 
     constructor() {
@@ -31,21 +32,20 @@ contract Factory is AccessControl {
         fund = new Fund(100000);
     }
 
-    function createProfile(string calldata name) public {
+    function createProfile(bytes32 name) public {
         require(
             address(profiles[msg.sender]) == address(0),
             "Profile is already created"
         );
+        require(name != 0, "Empty name");
 
-        // TODO: Validate length
         Profile profile = new Profile(msg.sender, name);
         profiles[msg.sender] = profile;
 
         emit ProfileCreated(address(profile), msg.sender, name);
     }
 
-    function createProject(string calldata slug, string calldata name) public {
-        // TODO: Slug validation (library)
+    function createProject(bytes32 slug, bytes32 name) public {
         require(
             address(projects[slug]) == address(0),
             "Project slug is already taken"
@@ -54,10 +54,10 @@ contract Factory is AccessControl {
         Project project = new Project(msg.sender, slug, name);
         projects[slug] = project;
 
-        emit ProfileCreated(address(project), msg.sender, slug);
+        emit ProjectCreated(address(project), msg.sender, slug, name);
     }
 
-    function deleteProject(string calldata slug) public {
+    function deleteProject(bytes32 slug) public {
         require(
             projects[slug].hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
             "You must be an admin to delete project"
