@@ -2,11 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./Customizable.sol";
+import "./Factorable.sol";
 
-contract Post is Customizable {
+contract Post is Ownable, Customizable {
     using Counters for Counters.Counter;
 
     struct Fundraising {
@@ -22,7 +24,6 @@ contract Post is Customizable {
         uint256[] replies;
     }
 
-    address public project;
     uint256 public time;
     string public content;
     Fundraising public fundraising;
@@ -31,14 +32,8 @@ contract Post is Customizable {
     mapping(uint256 => Comment) public comments;
 
     constructor(string memory _content) {
-        project = msg.sender;
         time = block.timestamp;
         content = _content;
-    }
-
-    modifier onlyProject() {
-        require(msg.sender == project);
-        _;
     }
 
     function addComment(string memory _content, uint256 _parent) public {

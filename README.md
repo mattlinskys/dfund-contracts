@@ -1,4 +1,4 @@
-# Dfund contracts
+# Decentralized Funding service (DFund.me) - contracts
 
 ### Compile
 

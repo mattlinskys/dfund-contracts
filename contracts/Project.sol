@@ -5,11 +5,14 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
+import "./Factory.sol";
 import "./Customizable.sol";
 import "./Fundraising.sol";
 import "./Post.sol";
+import "./Profile.sol";
+import "./Factorable.sol";
 
-contract Project is AccessControlEnumerable, Ownable, Customizable {
+contract Project is AccessControlEnumerable, Factorable, Customizable {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     event PostAdded(address indexed account);
@@ -23,6 +26,7 @@ contract Project is AccessControlEnumerable, Ownable, Customizable {
     bytes32 public name;
     EnumerableSet.AddressSet posts;
     EnumerableSet.AddressSet pinnedPosts;
+    EnumerableSet.AddressSet followers;
 
     constructor(
         address admin,
@@ -49,14 +53,25 @@ contract Project is AccessControlEnumerable, Ownable, Customizable {
         return members;
     }
 
-    function addPost(string calldata content)
+    function addPost(string calldata _content)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        Post post = new Post(content);
+        Post post = new Post(_content);
         posts.add(address(post));
 
         emit PostAdded(address(post));
+    }
+
+    function addFundraising(
+        string calldata _content,
+        uint256 _goal,
+        uint256 _deadline
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        Fundraising fundraising = new Fundraising(_content, _goal, _deadline);
+        posts.add(address(fundraising));
+
+        emit PostAdded(address(fundraising));
     }
 
     function removePost(address post) public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -86,15 +101,19 @@ contract Project is AccessControlEnumerable, Ownable, Customizable {
         return new address[](0);
     }
 
-    function destruct() public onlyOwner {
-        // selfdestruct(payable(msg.sender));
+    function followerCount() external view returns (uint256) {
+        return followers.length();
     }
 
-    // TODO: removePost
+    function addFollower(address follower) public onlyFactory {
+        followers.add(follower);
+    }
 
-    // function createFundraising(uint256 memory goal, uint256 memory deadline)
-    //     public
-    //     onlyRole(DEFAULT_ADMIN_ROLE)
-    // {
-    // }
+    function removeFollower(address follower) public onlyFactory {
+        followers.remove(follower);
+    }
+
+    function destruct() public onlyFactory {
+        // selfdestruct(payable(msg.sender));
+    }
 }
