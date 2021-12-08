@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
  * by factory
  */
 abstract contract Factorable {
-    address private _factory;
+    address private immutable _factory;
 
     /**
      * @dev Initializes the contract setting the deployer as the factory

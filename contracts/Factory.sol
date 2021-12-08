@@ -26,7 +26,7 @@ contract Factory is Ownable {
 
     mapping(address => Profile) public profiles;
     mapping(bytes32 => Project) public projects;
-    address public fund;
+    address public immutable fund;
 
     constructor() {
         fund = address(new Fund(100000));

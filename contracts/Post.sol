@@ -11,11 +11,6 @@ import "./Factorable.sol";
 contract Post is Ownable, Customizable {
     using Counters for Counters.Counter;
 
-    struct Fundraising {
-        uint256 goal;
-        uint256 deadline;
-    }
-
     struct Comment {
         uint256 id;
         uint256 time;
@@ -26,7 +21,6 @@ contract Post is Ownable, Customizable {
 
     uint256 public time;
     string public content;
-    Fundraising public fundraising;
 
     Counters.Counter public idCounter;
     mapping(uint256 => Comment) public comments;

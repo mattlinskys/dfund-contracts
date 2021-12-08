@@ -7,17 +7,14 @@ import "./Factory.sol";
 import "./Fund.sol";
 
 contract Fundraising is Post {
-    uint256 public goal;
-    uint256 public deadline;
+    uint256 public immutable goal;
+    uint256 public immutable deadline;
 
     constructor(
         string memory _content,
         uint256 _goal,
         uint256 _deadline
     ) Post(_content) {
-        require(_goal > 0, "Invalid goal");
-        require(_deadline > block.timestamp, "Invalid deadline");
-
         goal = _goal;
         deadline = _deadline;
     }

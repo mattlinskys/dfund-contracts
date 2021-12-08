@@ -22,7 +22,7 @@ contract Project is AccessControlEnumerable, Factorable, Customizable {
     bytes32 public constant DESIGNER_ROLE = keccak256("DESIGNER_ROLE");
     bytes32 public constant ACCOUNTANT_ROLE = keccak256("ACCOUNTANT_ROLE");
 
-    bytes32 public slug;
+    bytes32 public immutable slug;
     bytes32 public name;
     EnumerableSet.AddressSet posts;
     EnumerableSet.AddressSet pinnedPosts;
@@ -68,6 +68,9 @@ contract Project is AccessControlEnumerable, Factorable, Customizable {
         uint256 _goal,
         uint256 _deadline
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(_goal > 0, "Invalid goal");
+        require(_deadline > block.timestamp, "Invalid deadline");
+
         Fundraising fundraising = new Fundraising(_content, _goal, _deadline);
         posts.add(address(fundraising));
 
